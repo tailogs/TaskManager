@@ -22,3 +22,6 @@ go.work
 
 # My files
 tasks.txt
+rsrc.syso
+go.mod
+go.sum

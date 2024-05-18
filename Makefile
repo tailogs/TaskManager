@@ -28,6 +28,8 @@ install:
 	go get fyne.io/fyne/v2
 	go get fyne.io/fyne/v2/cmd/fyne
 	go get -d ./...
+	go install github.com/akavel/rsrc@latest
+	rsrc -ico TaskManager.ico -o rsrc.syso
 	go mod tidy
 
 # Обозначение фальшивых целей
