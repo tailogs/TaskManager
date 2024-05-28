@@ -264,7 +264,7 @@ func main() {
         showButton,
     ))
 
-    myWindow.Resize(fyne.NewSize(400, 400))
+    myWindow.Resize(fyne.NewSize(400, 280))
     myWindow.Show()
 
     stop := make(chan os.Signal, 1)
