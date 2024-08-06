@@ -16,6 +16,7 @@ import (
     "fyne.io/fyne/v2/dialog"
     "fyne.io/fyne/v2/theme"
     "fyne.io/fyne/v2/widget"
+    "fyne.io/fyne/v2/layout"
 )
 
 type Task struct {
@@ -42,6 +43,11 @@ func (tm *TaskManager) AddTask(description string) {
     task := Task{id: tm.nextID, description: description}
     tm.tasks = append(tm.tasks, task)
     fmt.Println("Задача добавлена.")
+    go func() {
+        if err := tm.SaveToFile("tasks.txt"); err != nil {
+            fmt.Println("Ошибка сохранения задач в файл:", err)
+        }
+    }()
 }
 
 func (tm *TaskManager) DeleteTask(id int) {
@@ -52,9 +58,11 @@ func (tm *TaskManager) DeleteTask(id int) {
         if task.id == id {
             tm.tasks = append(tm.tasks[:i], tm.tasks[i+1:]...)
             fmt.Println("Задача удалена.")
-            if err := tm.SaveToFile("tasks.txt"); err != nil {
-                fmt.Println("Ошибка сохранения задач в файл:", err)
-            }
+            go func() {
+                if err := tm.SaveToFile("tasks.txt"); err != nil {
+                    fmt.Println("Ошибка сохранения задач в файл:", err)
+                }
+            }()
             return
         }
     }
@@ -69,6 +77,11 @@ func (tm *TaskManager) CompleteTask(id int) {
         if task.id == id {
             tm.tasks[i].completed = true
             fmt.Println("Задача отмечена как выполненная.")
+            go func() {
+                if err := tm.SaveToFile("tasks.txt"); err != nil {
+                    fmt.Println("Ошибка сохранения задач в файл:", err)
+                }
+            }()
             return
         }
     }
@@ -134,6 +147,8 @@ func (tm *TaskManager) LoadFromFile(filename string) error {
     scanner := bufio.NewScanner(file)
     tm.tasks = nil // Clear existing tasks
 
+    var maxID int
+
     for scanner.Scan() {
         line := scanner.Text()
         if line == "" {
@@ -158,6 +173,10 @@ func (tm *TaskManager) LoadFromFile(filename string) error {
             continue
         }
 
+        if id > maxID {
+            maxID = id
+        }
+
         tm.tasks = append(tm.tasks, Task{id: id, description: parts[1], completed: completed == 1})
     }
 
@@ -166,6 +185,7 @@ func (tm *TaskManager) LoadFromFile(filename string) error {
         return err
     }
 
+    tm.nextID = maxID
     fmt.Printf("Загружено %d задач из файла\n", len(tm.tasks))
     return nil
 }
@@ -190,6 +210,8 @@ func loadIconFromFile(filename string) (fyne.Resource, error) {
 }
 
 func main() {
+    version := "2.0.1"
+
     taskManager := NewTaskManager()
 
     // Загрузка задач из файла при запуске
@@ -207,6 +229,13 @@ func main() {
     myApp := app.New()
     myApp.SetIcon(resourceIcon())
     myWindow := myApp.NewWindow("Task Manager")
+
+    defer func() {
+        if err := taskManager.SaveToFile("tasks.txt"); err != nil {
+            fmt.Println("Ошибка сохранения задач в файл:", err)
+        }
+        myApp.Quit()
+    }()
 
     descriptionEntry := widget.NewEntry()
     descriptionEntry.SetPlaceHolder("Описание задачи")
@@ -254,7 +283,9 @@ func main() {
         dialog.ShowInformation("Список задач", tasks, myWindow)
     })
 
-    myWindow.SetContent(container.NewVBox(
+    versionLabel := widget.NewLabel("Version: " + version) // Здесь вы можете указать вашу версию
+
+    content := container.NewVBox(
         widget.NewLabel("Task Manager"),
         descriptionEntry,
         addButton,
@@ -262,6 +293,19 @@ func main() {
         deleteButton,
         completeButton,
         showButton,
+    )
+
+    footer := container.NewHBox(
+        layout.NewSpacer(), // Оставляет пространство слева
+        versionLabel,       // Метка версии справа
+    )
+
+    myWindow.SetContent(container.NewBorder(
+        content, // Center content
+        nil,     // Top content
+        nil,     // Left content
+        nil,     // Right content
+        footer,  // Bottom content
     ))
 
     myWindow.Resize(fyne.NewSize(400, 280))
