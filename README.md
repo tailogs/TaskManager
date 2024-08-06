@@ -1,6 +1,6 @@
 # TaskManager
 
-![image](https://github.com/tailogs/TaskManager/assets/69743960/0ad7d17f-0587-434d-ac06-6cad49cc9c90)
+![image](https://github.com/user-attachments/assets/dcdfcf1f-2c38-4966-9615-6711213c53a3)
 
 *Рисунок 1. Интерфейс моей программы*
 
