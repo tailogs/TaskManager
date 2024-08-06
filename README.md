@@ -1,4 +1,4 @@
-# TaskManager
+# Task Manager
 
 ![image](https://github.com/user-attachments/assets/dcdfcf1f-2c38-4966-9615-6711213c53a3)
 
@@ -23,23 +23,25 @@
 
 ### Используя нативные средства `Go`
 
+Первый шаг обязателен, 
+
 1. Склонируйте проект:
 
     ```sh
-    git clone https://github.com/tailogs/TaskManager.git
+    git clone https://github.com/tailogs/task_manager.git
     ```
 
     ```sh
-    cd TaskManager
+    cd task_manager
     ```
 
-2. Инициализируйте модуль Go:
+2. Инициализируйте модуль Go `**(Делать не нужно, уже сделано)**`:
 
     ```sh
-    go mod init TaskManager
+    go mod init task_manager
     ```
 
-3. Установите библиотеки для создания графического интерфейса и другие зависимости:
+3. Установите библиотеки для создания графического интерфейса и другие зависимости `**(Делать не нужно, уже сделано)**`:
 
     ```sh
     go get fyne.io/fyne/v2
@@ -47,7 +49,6 @@
     
     ```sh
     go get github.com/Knetic/govaluate
-    ```
 
 4. Установите инструмент командной строки для сборки иконок и ресурсов:
 
@@ -64,25 +65,29 @@
 6. Создайте файл ресурсов с иконкой:
 
     ```sh
-    rsrc -ico TaskManager.ico -o rsrc.syso
+    rsrc -ico icon.ico -o rsrc.syso
     ```
 
-7. Очистите зависимости:
+7. Скачаем зависимости и очистим проект:
 
     ```sh
     go mod tidy
+    go mod vendor
     ```
+
+    [Подробнее о tidy](https://golang-blog.blogspot.com/2019/06/go-commands-go-mod-tidy.html)
+    [Подробнее о vendor](https://golang-blog.blogspot.com/2021/02/module-aware-commands-go-mod-vendor.htmlml)
 
 8. Постройте проект:
 
     ```sh
-    go build -ldflags="-H=windowsgui" -o TaskManager.exe .
+    go build -x -ldflags="-H=windowsgui" -o task_manager.exe .
     ```
 
 9. Запустите проект:
 
     ```sh
-    TaskManager.exe
+    task_manager.exe
     ```
 
 ### Использование

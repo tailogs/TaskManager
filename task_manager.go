@@ -191,7 +191,7 @@ func (tm *TaskManager) LoadFromFile(filename string) error {
 }
 
 func resourceIcon() fyne.Resource {
-    ico, err := loadIconFromFile("TaskManager.ico")
+    ico, err := loadIconFromFile("icon.ico")
     if err != nil {
         fmt.Println("Ошибка загрузки иконки:", err)
         // Возвращаем стандартную иконку в случае ошибки
